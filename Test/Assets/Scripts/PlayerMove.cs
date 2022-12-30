@@ -10,6 +10,13 @@ public class PlayerMove : MonoBehaviour
     public float clingCoolTime;
     public float clingJumpPower;
     public bool isGround = true;
+    public bool isLookingleft = false;
+    public bool canDash = true;
+    [SerializeField] SpriteRenderer spriteRenderer;
+    enum colorState{
+        white, red
+    }
+    [SerializeField] colorState myColorState = colorState.white;
     void Start()
     {
         
@@ -18,14 +25,25 @@ public class PlayerMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(isLookingleft)
+        {
+            transform.localScale = new Vector3(-1, 1, 1);
+        }
+        else
+        {
+           transform.localScale = new Vector3(1, 1, 1); 
+        }
+
         clingCoolTime+=Time.deltaTime;
         if(Input.GetKey(KeyCode.A) )
         {
+            isLookingleft = true;
             rigidbody2D.AddForce(new Vector2(-moveSpeed, 0));
         }
 
         if(Input.GetKey(KeyCode.D) )
         {
+            isLookingleft = false;
             rigidbody2D.AddForce(new Vector2(moveSpeed, 0));
         }
 
@@ -35,7 +53,7 @@ public class PlayerMove : MonoBehaviour
             isGround= false;
         }
 
-        if(rigidbody2D.bodyType == RigidbodyType2D.Static && Input.GetKeyDown(KeyCode.Space))
+        if(rigidbody2D.bodyType == RigidbodyType2D.Static && Input.GetKeyDown(KeyCode.Space) && !isGround)
         {
             if(Input.GetKey(KeyCode.A))
             {
@@ -51,6 +69,12 @@ public class PlayerMove : MonoBehaviour
                 rigidbody2D.AddForce(new Vector2(clingJumpPower, jumpPower));
             }
         }
+
+        if(canDash && Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            canDash = false;
+            Dash(isLookingleft);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D other) {
@@ -62,6 +86,38 @@ public class PlayerMove : MonoBehaviour
         if(other.gameObject.CompareTag("Ground"))
         {
             isGround = true;
+        }
+    }
+
+    private void OnCollisionStay2D(Collision2D other) {
+        canDash=true;
+    }
+
+    public float DashPower;
+    void Dash(bool isLeft)
+    {
+        changeColor();
+        if(isLeft)
+        {
+            rigidbody2D.AddForce(new Vector2(-DashPower, 0));
+        }
+        else
+        {
+            rigidbody2D.AddForce(new Vector2(DashPower, 0));
+        }
+    }
+
+    void changeColor()
+    {
+        if(myColorState == colorState.white)
+        {
+            spriteRenderer.color= Color.red;
+            myColorState = colorState.red;
+        }
+        else
+        {
+            spriteRenderer.color = Color.white;
+            myColorState = colorState.white;
         }
     }
 }

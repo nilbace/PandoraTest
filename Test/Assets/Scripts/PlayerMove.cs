@@ -22,7 +22,6 @@ public class PlayerMove : MonoBehaviour
         
     }
 
-    // Update is called once per frame
     void Update()
     {
         if(isLookingleft)
@@ -78,11 +77,11 @@ public class PlayerMove : MonoBehaviour
     }
 
     private void OnCollisionEnter2D(Collision2D other) {
+        
         if(other.gameObject.CompareTag("Wall") && clingCoolTime > 0.1f)
         {
             rigidbody2D.bodyType = RigidbodyType2D.Static;
         }
-
         if(other.gameObject.CompareTag("Ground"))
         {
             isGround = true;
@@ -91,6 +90,7 @@ public class PlayerMove : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D other) {
         canDash=true;
+        
     }
 
     public float DashPower;

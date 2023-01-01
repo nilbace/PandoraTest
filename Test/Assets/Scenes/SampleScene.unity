@@ -737,19 +737,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rigidbody2D: {fileID: 625175982}
-  moveSpeed: 3.28
-  maxSpeed: 2.38
+  maxSpeed: 4
   jumpPower: 10
-  JumpTimer: 6.179995
+  JumpTimer: 4.279997
+  JumpCoolTime: 0.35
   isGround: 1
-  isLookingleft: 1
+  isLookingleft: 0
   canDash: 1
-  DashTimer: 8.940015
+  DashTimer: 7.299994
   DashCoolTime: 0.52
   xSpeed: 0
   spriteRenderer: {fileID: 625175984}
-  myColorState: 1
-  maxDashSpeed: 6.3
+  myColorState: 0
+  maxDashSpeed: 10
 --- !u!212 &625175984
 SpriteRenderer:
   m_ObjectHideFlags: 0

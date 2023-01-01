@@ -5,13 +5,16 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     public Rigidbody2D rigidbody2D;
-    public float moveSpeed;
+    public float maxSpeed;
     public float jumpPower;
-    public float clingCoolTime;
-    public float clingJumpPower;
+    public float JumpTimer;
+    public float JumpCoolTime = 0.2f;
     public bool isGround = true;
     public bool isLookingleft = false;
     public bool canDash = true;
+    public float DashTimer;
+    public float DashCoolTime = 0.2f;
+    public float xSpeed;
     [SerializeField] SpriteRenderer spriteRenderer;
     enum colorState{
         white, red
@@ -22,64 +25,71 @@ public class PlayerMove : MonoBehaviour
         
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        if(isLookingleft)
+        
+        JumpTimer+=Time.deltaTime;
+        DashTimer+=Time.deltaTime;
+        xSpeed = rigidbody2D.velocity.x;
+        float h = Input.GetAxisRaw("Horizontal");  lookingLeftOrRight(h);
+        rigidbody2D.AddForce(Vector2.right*h*100, ForceMode2D.Impulse);
+        if (rigidbody2D.velocity.x > maxSpeed && DashTimer > DashCoolTime)//오른쪽
         {
-            transform.localScale = new Vector3(-1, 1, 1);
+            rigidbody2D.velocity = new Vector2(maxSpeed,rigidbody2D.velocity.y);//y값을 0으로 잡으면 공중에서 멈춰버림
         }
-        else
+        else if (rigidbody2D.velocity.x < maxSpeed*(-1) && DashTimer > DashCoolTime)//왼쪽
         {
-           transform.localScale = new Vector3(1, 1, 1); 
-        }
-
-        clingCoolTime+=Time.deltaTime;
-        if(Input.GetKey(KeyCode.A) )
-        {
-            isLookingleft = true;
-            rigidbody2D.AddForce(new Vector2(-moveSpeed, 0));
-        }
-
-        if(Input.GetKey(KeyCode.D) )
-        {
-            isLookingleft = false;
-            rigidbody2D.AddForce(new Vector2(moveSpeed, 0));
+            rigidbody2D.velocity = new Vector2(maxSpeed*(-1), rigidbody2D.velocity.y);
         }
 
-        if(Input.GetKeyDown(KeyCode.Space) && isGround)
+        if(Input.GetKey(KeyCode.Space) && isGround && JumpTimer>JumpCoolTime)
         {
-            rigidbody2D.AddForce(new Vector2(0, jumpPower));
+            JumpTimer= 0;
+            rigidbody2D.AddForce(new Vector2(0, jumpPower), ForceMode2D.Impulse);
             isGround= false;
         }
-
-        if(rigidbody2D.bodyType == RigidbodyType2D.Static && Input.GetKeyDown(KeyCode.Space) && !isGround)
+        else if(rigidbody2D.bodyType == RigidbodyType2D.Static && Input.GetKey(KeyCode.Space) && !isGround && JumpTimer> JumpCoolTime)
         {
-            if(Input.GetKey(KeyCode.A))
-            {
-                rigidbody2D.bodyType = RigidbodyType2D.Dynamic;
-                clingCoolTime = 0f;
-                rigidbody2D.AddForce(new Vector2(-clingJumpPower, jumpPower));
-            }
-
-            if(Input.GetKey(KeyCode.D))
-            {
-                rigidbody2D.bodyType = RigidbodyType2D.Dynamic;
-                clingCoolTime = 0f;
-                rigidbody2D.AddForce(new Vector2(clingJumpPower, jumpPower));
-            }
+            JumpTimer=0;
+            rigidbody2D.bodyType = RigidbodyType2D.Dynamic;
+            rigidbody2D.AddForce(new Vector2(0, jumpPower), ForceMode2D.Impulse);
         }
 
-        if(canDash && Input.GetKeyDown(KeyCode.LeftShift))
+        if(canDash && Input.GetKey(KeyCode.LeftShift) && DashTimer>DashCoolTime)
         {
+            DashTimer = 0;
             canDash = false;
             Dash(isLookingleft);
+        }
+        if (rigidbody2D.velocity.x > maxDashSpeed)//오른쪽
+        {
+            rigidbody2D.velocity = new Vector2(maxDashSpeed,rigidbody2D.velocity.y);//y값을 0으로 잡으면 공중에서 멈춰버림
+        }
+        else if (rigidbody2D.velocity.x < maxDashSpeed*(-1))//왼쪽
+        {
+            rigidbody2D.velocity = new Vector2(maxDashSpeed*(-1), rigidbody2D.velocity.y);
+        }
+    }
+
+    void lookingLeftOrRight(float dir)
+    {
+        if(dir == -1)
+        {
+            isLookingleft = true;
+            transform.localScale = new Vector3(-1, 1, 1);
+        }
+        else if(dir == 1)
+        {
+            isLookingleft = false;
+           transform.localScale = new Vector3(1, 1, 1); 
         }
     }
 
     private void OnCollisionEnter2D(Collision2D other) {
         
-        if(other.gameObject.CompareTag("Wall") && clingCoolTime > 0.1f)
+        if(other.gameObject.CompareTag("Wall") && JumpTimer > 0.1f)
         {
+            canDash = true;
             rigidbody2D.bodyType = RigidbodyType2D.Static;
         }
         if(other.gameObject.CompareTag("Ground"))
@@ -90,21 +100,28 @@ public class PlayerMove : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D other) {
         canDash=true;
-        
+        isGround=true;
     }
 
-    public float DashPower;
+    private void OnCollisionExit2D(Collision2D other) {
+        isGround= false;
+    }
+
+    public float maxDashSpeed;
     void Dash(bool isLeft)
     {
-        changeColor();
-        if(isLeft)
+        if(rigidbody2D.bodyType == RigidbodyType2D.Dynamic)
         {
-            rigidbody2D.AddForce(new Vector2(-DashPower, 0));
-        }
-        else
-        {
-            rigidbody2D.AddForce(new Vector2(DashPower, 0));
-        }
+            changeColor();
+            if(isLeft)
+            {
+                rigidbody2D.AddForce(new Vector2(-100, 0), ForceMode2D.Impulse);
+            }
+         else
+            {
+                rigidbody2D.AddForce(new Vector2(100, 0), ForceMode2D.Impulse);
+            }
+        } 
     }
 
     void changeColor()

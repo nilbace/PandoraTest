@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     public Rigidbody2D rigidbody2D;
-    public float maxSpeed;
+    public float moveSpeed;
     public float jumpPower;
     public float JumpTimer;
     public float JumpCoolTime = 0.2f;
@@ -14,6 +14,7 @@ public class PlayerMove : MonoBehaviour
     public bool canDash = true;
     public float DashTimer;
     public float DashCoolTime = 0.2f;
+    public float Dashheight;
     public float xSpeed;
     [SerializeField] SpriteRenderer spriteRenderer;
     enum colorState{
@@ -32,43 +33,16 @@ public class PlayerMove : MonoBehaviour
         DashTimer+=Time.deltaTime;
         xSpeed = rigidbody2D.velocity.x;
         float h = Input.GetAxisRaw("Horizontal");  lookingLeftOrRight(h);
-        rigidbody2D.AddForce(Vector2.right*h*100, ForceMode2D.Impulse);
-        if (rigidbody2D.velocity.x > maxSpeed && DashTimer > DashCoolTime)//오른쪽
-        {
-            rigidbody2D.velocity = new Vector2(maxSpeed,rigidbody2D.velocity.y);//y값을 0으로 잡으면 공중에서 멈춰버림
-        }
-        else if (rigidbody2D.velocity.x < maxSpeed*(-1) && DashTimer > DashCoolTime)//왼쪽
-        {
-            rigidbody2D.velocity = new Vector2(maxSpeed*(-1), rigidbody2D.velocity.y);
-        }
+        transform.Translate(new Vector3(h * moveSpeed, 0));
 
-        if(Input.GetKey(KeyCode.Space) && isGround && JumpTimer>JumpCoolTime)
+        if(Input.GetKeyDown(KeyCode.Space))
         {
             JumpTimer= 0;
-            rigidbody2D.AddForce(new Vector2(0, jumpPower), ForceMode2D.Impulse);
+            transform.Translate(new Vector2(0, jumpPower));
             isGround= false;
         }
-        else if(rigidbody2D.bodyType == RigidbodyType2D.Static && Input.GetKey(KeyCode.Space) && !isGround && JumpTimer> JumpCoolTime)
-        {
-            JumpTimer=0;
-            rigidbody2D.bodyType = RigidbodyType2D.Dynamic;
-            rigidbody2D.AddForce(new Vector2(0, jumpPower), ForceMode2D.Impulse);
-        }
-
-        if(canDash && Input.GetKey(KeyCode.LeftShift) && DashTimer>DashCoolTime)
-        {
-            DashTimer = 0;
-            canDash = false;
-            Dash(isLookingleft);
-        }
-        if (rigidbody2D.velocity.x > maxDashSpeed)//오른쪽
-        {
-            rigidbody2D.velocity = new Vector2(maxDashSpeed,rigidbody2D.velocity.y);//y값을 0으로 잡으면 공중에서 멈춰버림
-        }
-        else if (rigidbody2D.velocity.x < maxDashSpeed*(-1))//왼쪽
-        {
-            rigidbody2D.velocity = new Vector2(maxDashSpeed*(-1), rigidbody2D.velocity.y);
-        }
+        
+        
     }
 
     void lookingLeftOrRight(float dir)
@@ -84,6 +58,10 @@ public class PlayerMove : MonoBehaviour
            transform.localScale = new Vector3(1, 1, 1); 
         }
     }
+
+
+
+
 
     private void OnCollisionEnter2D(Collision2D other) {
         
@@ -110,6 +88,8 @@ public class PlayerMove : MonoBehaviour
     public float maxDashSpeed;
     void Dash(bool isLeft)
     {
+        Dashheight = transform.position.y;
+
         if(rigidbody2D.bodyType == RigidbodyType2D.Dynamic)
         {
             changeColor();

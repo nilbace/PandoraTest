@@ -68,7 +68,7 @@ public class PlayerMove : MonoBehaviour
             {
                 isJumping=false;
             }
-            if(!isJumping && !isDash)
+            if(!isJumping && !isDash && !isGround)
             {
                 transform.Translate(new Vector3(0, -fallingSpeed));
 

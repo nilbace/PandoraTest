@@ -5,17 +5,29 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     public Rigidbody2D rigidbody2D;
+    
     public float moveSpeed;
-    public float jumpPower;
-    public float JumpTimer;
-    public float JumpCoolTime = 0.2f;
-    public bool isGround = true;
     public bool isLookingleft = false;
+
+
+    public float jumpSpeed;
+    public float jumpTimer;
+    public float jumpLimit = 0.5f;
+    public float fallingSpeed;
+    public bool isJumping;
+    public bool isGround;
+
+
+    public bool isDash = false;
     public bool canDash = true;
     public float DashTimer;
-    public float DashCoolTime = 0.2f;
+    public float DashCoolTime = 0.5f;
     public float Dashheight;
-    public float xSpeed;
+    public float DashDuration= 0.2f;
+    public float DashSpeed;
+
+
+
     [SerializeField] SpriteRenderer spriteRenderer;
     enum colorState{
         white, red
@@ -28,21 +40,57 @@ public class PlayerMove : MonoBehaviour
 
     void FixedUpdate()
     {
-        
-        JumpTimer+=Time.deltaTime;
         DashTimer+=Time.deltaTime;
-        xSpeed = rigidbody2D.velocity.x;
-        float h = Input.GetAxisRaw("Horizontal");  lookingLeftOrRight(h);
-        transform.Translate(new Vector3(h * moveSpeed, 0));
-
-        if(Input.GetKeyDown(KeyCode.Space))
+        jumpTimer+=Time.deltaTime;
+        float h = Input.GetAxisRaw("Horizontal");  
+        if(!isDash) 
         {
-            JumpTimer= 0;
-            transform.Translate(new Vector2(0, jumpPower));
-            isGround= false;
+            lookingLeftOrRight(h);
+            transform.Translate(new Vector3(h * moveSpeed, 0));
         }
-        
-        
+
+        if(Input.GetKey(KeyCode.Space))
+        {
+            if(!isJumping && !isDash && isGround) isJumping=true;
+            if(isJumping && jumpTimer<jumpLimit && !isDash)
+            {
+                transform.Translate(new Vector3(0, jumpSpeed));
+            }
+            if(jumpTimer>jumpLimit && !isDash)
+            {
+                transform.Translate(new Vector3(0, -fallingSpeed));
+            }
+        }
+        else
+        {
+            isJumping=false;
+            if(!isGround)
+            {
+                isJumping=false;
+            }
+            if(!isJumping && !isDash)
+            {
+                transform.Translate(new Vector3(0, -fallingSpeed));
+
+            }
+        } 
+
+        if(Input.GetKey(KeyCode.LeftShift))
+        {
+            if(canDash && DashTimer>DashCoolTime) StartCoroutine(Dash());
+        }
+
+        //바닥 검사
+        Debug.DrawRay(rigidbody2D.position, Vector3.down, new Color(0,1,0));
+        RaycastHit2D rayHit = Physics2D.Raycast(rigidbody2D.position, Vector3.down, 0.7f, LayerMask.GetMask("Ground"));
+        if(rayHit.collider != null)
+        {
+            isGround=true;
+        }
+        else
+        {
+            isGround=false;
+        }
     }
 
     void lookingLeftOrRight(float dir)
@@ -51,11 +99,13 @@ public class PlayerMove : MonoBehaviour
         {
             isLookingleft = true;
             transform.localScale = new Vector3(-1, 1, 1);
+
         }
         else if(dir == 1)
         {
             isLookingleft = false;
            transform.localScale = new Vector3(1, 1, 1); 
+
         }
     }
 
@@ -65,44 +115,40 @@ public class PlayerMove : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D other) {
         
-        if(other.gameObject.CompareTag("Wall") && JumpTimer > 0.1f)
+        if(other.gameObject.CompareTag("Wall"))
         {
             canDash = true;
-            rigidbody2D.bodyType = RigidbodyType2D.Static;
         }
-        if(other.gameObject.CompareTag("Ground"))
-        {
-            isGround = true;
-        }
+        
     }
 
     private void OnCollisionStay2D(Collision2D other) {
         canDash=true;
-        isGround=true;
+        jumpTimer=0;
     }
 
-    private void OnCollisionExit2D(Collision2D other) {
-        isGround= false;
-    }
 
-    public float maxDashSpeed;
-    void Dash(bool isLeft)
+
+    IEnumerator Dash()
     {
-        Dashheight = transform.position.y;
-
-        if(rigidbody2D.bodyType == RigidbodyType2D.Dynamic)
+        WorldManager.instance.Change();
+        DashTimer=0;
+        changeColor();
+        isDash = true;
+        isJumping=false;
+        if(isLookingleft == true)
         {
-            changeColor();
-            if(isLeft)
-            {
-                rigidbody2D.AddForce(new Vector2(-100, 0), ForceMode2D.Impulse);
-            }
-         else
-            {
-                rigidbody2D.AddForce(new Vector2(100, 0), ForceMode2D.Impulse);
-            }
-        } 
+            rigidbody2D.velocity = new Vector2(-DashSpeed,0);
+        }
+        else
+        {
+            rigidbody2D.velocity = new Vector2(DashSpeed,0);
+        }
+        yield return new WaitForSeconds(DashDuration);
+        rigidbody2D.velocity = Vector2.zero;
+        isDash=false;
     }
+   
 
     void changeColor()
     {

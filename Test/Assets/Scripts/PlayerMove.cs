@@ -5,19 +5,19 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     public Rigidbody2D rigidbody2D;
-    
-    public float moveSpeed;
+    [Header("Move")]
+    public float maxSpeed;
     public bool isLookingleft = false;
 
-
-    public float jumpSpeed;
+    [Header("Jump")]
     public float jumpTimer;
-    public float jumpLimit = 0.5f;
-    public float fallingSpeed;
+    public float jumpLimitTime = 0.5f;
+    public float maxjumpSpeed;
+    public bool jumpStarted;
     public bool isJumping;
     public bool isGround;
 
-
+    [Header("Dash")]
     public bool isDash = false;
     public bool canDash = true;
     public float DashTimer;
@@ -33,47 +33,65 @@ public class PlayerMove : MonoBehaviour
         white, red
     }
     [SerializeField] colorState myColorState = colorState.white;
+
+    private void Awake() {
+        Application.targetFrameRate=60;
+    }
     void Start()
     {
         
     }
 
-    void FixedUpdate()
+    void Update()
     {
         DashTimer+=Time.deltaTime;
-        jumpTimer+=Time.deltaTime;
         float h = Input.GetAxisRaw("Horizontal");  
         if(!isDash) 
         {
             lookingLeftOrRight(h);
-            transform.Translate(new Vector3(h * moveSpeed, 0));
+            rigidbody2D.AddForce(new Vector2(h*50,0), ForceMode2D.Impulse);
+            if(!isDash &&  rigidbody2D.velocity.x > maxSpeed)
+            {
+                rigidbody2D.velocity = new Vector2(maxSpeed, rigidbody2D.velocity.y);
+            }
+            else if(!isDash && rigidbody2D.velocity.x < -maxSpeed)
+            {
+                rigidbody2D.velocity = new Vector2(-maxSpeed, rigidbody2D.velocity.y);
+            }
         }
 
         if(Input.GetKey(KeyCode.Space))
         {
-            if(!isJumping && !isDash && isGround) isJumping=true;
-            if(isJumping && jumpTimer<jumpLimit && !isDash)
+            if(!jumpStarted && isGround) //점프시작
             {
-                transform.Translate(new Vector3(0, jumpSpeed));
+                jumpStarted = true;
+                rigidbody2D.AddForce(new Vector2(0,500), ForceMode2D.Impulse);
+                if(rigidbody2D.velocity.y > maxjumpSpeed)
+                {
+                    rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x ,maxjumpSpeed);
+                }
             }
-            if(jumpTimer>jumpLimit && !isDash)
+
+            if(jumpStarted && jumpTimer < jumpLimitTime) //점프를 누르는 중
             {
-                transform.Translate(new Vector3(0, -fallingSpeed));
+                isJumping=true;
+                jumpTimer+=Time.deltaTime;
+                rigidbody2D.AddForce(new Vector2(0,500), ForceMode2D.Impulse);
+                if(rigidbody2D.velocity.y > maxjumpSpeed)
+                {
+                    rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x ,maxjumpSpeed);
+                }
             }
         }
-        else
-        {
-            isJumping=false;
-            if(!isGround)
-            {
-                isJumping=false;
-            }
-            if(!isJumping && !isDash && !isGround)
-            {
-                transform.Translate(new Vector3(0, -fallingSpeed));
 
-            }
-        } 
+        if(Input.GetKeyUp(KeyCode.Space))
+        {
+            jumpStarted = false;
+            isJumping=false;
+            jumpTimer = 0;
+            rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x,0);
+        }
+    
 
         if(Input.GetKey(KeyCode.LeftShift))
         {
@@ -81,7 +99,7 @@ public class PlayerMove : MonoBehaviour
         }
 
         //바닥 검사
-        Debug.DrawRay(rigidbody2D.position, Vector3.down, new Color(0,1,0));
+        Debug.DrawRay(rigidbody2D.position+new Vector2(-0.5f,0), Vector3.down, new Color(0,1,0));
         RaycastHit2D rayHit = Physics2D.Raycast(rigidbody2D.position, Vector3.down, 0.7f, LayerMask.GetMask("Ground"));
         if(rayHit.collider != null)
         {
@@ -92,6 +110,8 @@ public class PlayerMove : MonoBehaviour
             isGround=false;
         }
     }
+
+
 
     void lookingLeftOrRight(float dir)
     {
@@ -131,22 +151,25 @@ public class PlayerMove : MonoBehaviour
 
     IEnumerator Dash()
     {
+        float gravityMemory = rigidbody2D.gravityScale;
         WorldManager.instance.Change();
         DashTimer=0;
+        rigidbody2D.gravityScale = 0;
         changeColor();
         isDash = true;
-        isJumping=false;
+        rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, 0);
         if(isLookingleft == true)
         {
-            rigidbody2D.velocity = new Vector2(-DashSpeed,0);
+            rigidbody2D.AddForce(new Vector2(-DashSpeed,0), ForceMode2D.Impulse);
         }
         else
         {
-            rigidbody2D.velocity = new Vector2(DashSpeed,0);
+            rigidbody2D.AddForce(new Vector2(DashSpeed,0), ForceMode2D.Impulse);
         }
         yield return new WaitForSeconds(DashDuration);
         rigidbody2D.velocity = Vector2.zero;
         isDash=false;
+        rigidbody2D.gravityScale = gravityMemory;
     }
    
 

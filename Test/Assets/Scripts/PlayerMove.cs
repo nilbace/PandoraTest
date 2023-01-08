@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     public Rigidbody2D rigidbody2D;
+    public Animator animator;
     [Header("Move")]
     public float maxSpeed;
     public bool isLookingleft = false;
@@ -29,10 +30,7 @@ public class PlayerMove : MonoBehaviour
 
 
     [SerializeField] SpriteRenderer spriteRenderer;
-    enum colorState{
-        white, red
-    }
-    [SerializeField] colorState myColorState = colorState.white;
+    
 
     private void Awake() {
         Application.targetFrameRate=60;
@@ -62,7 +60,7 @@ public class PlayerMove : MonoBehaviour
 
         if(Input.GetKey(KeyCode.Space))
         {
-            if(!jumpStarted && isGround) //점프시작
+            if(!jumpStarted && isGround && !isDash) //점프시작
             {
                 jumpStarted = true;
                 rigidbody2D.AddForce(new Vector2(0,500), ForceMode2D.Impulse);
@@ -72,7 +70,7 @@ public class PlayerMove : MonoBehaviour
                 }
             }
 
-            if(jumpStarted && jumpTimer < jumpLimitTime) //점프를 누르는 중
+            if(jumpStarted && jumpTimer < jumpLimitTime && !isDash) //점프를 누르는 중
             {
                 isJumping=true;
                 jumpTimer+=Time.deltaTime;
@@ -155,8 +153,17 @@ public class PlayerMove : MonoBehaviour
         WorldManager.instance.Change();
         DashTimer=0;
         rigidbody2D.gravityScale = 0;
-        changeColor();
         isDash = true;
+        if(WorldManager.instance.isCity)
+        {
+            animator.SetBool("isDream", true);
+        }
+        else
+        {
+            animator.SetBool("isDream", false);
+
+        }
+
         rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, 0);
         if(isLookingleft == true)
         {
@@ -173,17 +180,5 @@ public class PlayerMove : MonoBehaviour
     }
    
 
-    void changeColor()
-    {
-        if(myColorState == colorState.white)
-        {
-            spriteRenderer.color= Color.red;
-            myColorState = colorState.red;
-        }
-        else
-        {
-            spriteRenderer.color = Color.white;
-            myColorState = colorState.white;
-        }
-    }
+    
 }

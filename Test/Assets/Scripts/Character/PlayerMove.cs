@@ -29,9 +29,36 @@ public class PlayerMove : MonoBehaviour
     [Header("NormalDash")]
     public float NormalDashSpeed;
     public float NormalDashDuration;
+    [Header("Attack")]
+    public bool canAttack = true; //일단 임시
+
+    enum PlayerState{
+        CityIdle, CityWalk, CityAttack,
+        DreamIdle, DreamWalk, DreamAttack 
+    }
+
+    PlayerState playerState = PlayerState.CityIdle;
+    PlayerState lastPlayerState = PlayerState.CityIdle;
 
     void FixedUpdate()
     {
+        if(lastPlayerState != playerState)
+        {
+            lastPlayerState = playerState;
+            switch(playerState)
+            {
+                case PlayerState.CityIdle:
+                {
+                    animator.CrossFade("StartUmbr",0);
+                    break;
+                }
+                case PlayerState.CityAttack:
+                {
+                    animator.CrossFade("TempAttack", 0);
+                    break;
+                }
+            }
+        }
         DashTimer+=Time.deltaTime;
         float h = Input.GetAxisRaw("Horizontal");  
         if(!isDash) 
@@ -73,7 +100,7 @@ public class PlayerMove : MonoBehaviour
             }
         }
 
-        if(Input.GetKey(KeyCode.LeftShift))
+        if(Input.GetKey(KeyCode.LeftShift))  //이면대쉬
         {
             if(canDash && DashTimer>DashCoolTime) 
             {
@@ -82,7 +109,7 @@ public class PlayerMove : MonoBehaviour
             }
         }
 
-        if(Input.GetKey(KeyCode.LeftControl))
+        if(Input.GetKey(KeyCode.LeftControl))   //일반대쉬
         {
             if(canDash && DashTimer>DashCoolTime) 
             {
@@ -90,6 +117,16 @@ public class PlayerMove : MonoBehaviour
                 if(isJumping && canDash) {  canDash = false; jumpTimer+=5;}
             }
         }
+
+        if(Input.GetKey(KeyCode.J))   //기본공격
+        {
+            if(canAttack)
+            {
+                playerState = PlayerState.CityAttack;
+                StartCoroutine(CityAttack());
+            }
+        }
+        
 
         //바닥 검사
         if(!isLookingleft)    Debug.DrawRay(rigidbody2D.position+new Vector2(-0.5f,0), Vector3.down, new Color(0,1,0));
@@ -201,4 +238,10 @@ public class PlayerMove : MonoBehaviour
         rigidbody2D.gravityScale = gravityMemory;
     }
     
+    IEnumerator CityAttack()
+    {
+        yield return new WaitForSeconds(3f);
+        playerState = PlayerState.CityIdle;
+    }
+
 }

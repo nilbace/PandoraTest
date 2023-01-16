@@ -1,7 +1,31 @@
 fileFormatVersion: 2
 guid: 4b63a767e17caf0479ba9831b18d79d5
 TextureImporter:
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      213: -1769625783528185137
+    second: CityIdle_0
+  - first:
+      213: 3080959678663503508
+    second: CityIdle_1
+  - first:
+      213: -4168677144399810460
+    second: CityIdle_2
+  - first:
+      213: 6588649710588240423
+    second: CityIdle_3
+  - first:
+      213: -7417590807186145150
+    second: CityIdle_4
+  - first:
+      213: 232178474386960216
+    second: CityIdle_5
+  - first:
+      213: 8698317738294246290
+    second: CityIdle_6
+  - first:
+      213: 7933293014578267651
+    second: CityIdle_7
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -46,7 +70,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 300
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -90,7 +114,175 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: CityIdle_0
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 0
+        width: 253
+        height: 400
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fc22e6bc9b60177e0800000000000000
+      internalID: -1769625783528185137
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CityIdle_1
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 0
+        width: 264
+        height: 400
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 49e2a0e0184c1ca20800000000000000
+      internalID: 3080959678663503508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CityIdle_2
+      rect:
+        serializedVersion: 2
+        x: 868
+        y: 0
+        width: 253
+        height: 400
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 46072c84932e526c0800000000000000
+      internalID: -4168677144399810460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CityIdle_3
+      rect:
+        serializedVersion: 2
+        x: 1259
+        y: 0
+        width: 273
+        height: 400
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 722a71de0069f6b50800000000000000
+      internalID: 6588649710588240423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CityIdle_4
+      rect:
+        serializedVersion: 2
+        x: 1668
+        y: 0
+        width: 273
+        height: 400
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2808770067c6f0990800000000000000
+      internalID: -7417590807186145150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CityIdle_5
+      rect:
+        serializedVersion: 2
+        x: 2059
+        y: 0
+        width: 273
+        height: 400
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 85fa352a71dd83300800000000000000
+      internalID: 232178474386960216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CityIdle_6
+      rect:
+        serializedVersion: 2
+        x: 2468
+        y: 0
+        width: 273
+        height: 400
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 29bf186b5e1a6b870800000000000000
+      internalID: 8698317738294246290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CityIdle_7
+      rect:
+        serializedVersion: 2
+        x: 2868
+        y: 0
+        width: 273
+        height: 400
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3068601e6f7b81e60800000000000000
+      internalID: 7933293014578267651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []

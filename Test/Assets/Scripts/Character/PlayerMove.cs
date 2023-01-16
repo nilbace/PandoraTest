@@ -14,7 +14,7 @@ public class PlayerMove : MonoBehaviour
     public float jumpTimer;
     public float jumpLimitTime = 0.5f;
     public float maxjumpSpeed;
-    public bool jumpStarted;
+    public bool canJump = true;
     public bool isJumping;
     public bool isGround;
 
@@ -37,7 +37,7 @@ public class PlayerMove : MonoBehaviour
         DreamIdle, DreamWalk, DreamAttack 
     }
 
-    PlayerState playerState = PlayerState.CityIdle;
+    [SerializeField] PlayerState playerState = PlayerState.CityIdle;
     PlayerState lastPlayerState = PlayerState.CityIdle;
 
     void FixedUpdate()
@@ -55,6 +55,11 @@ public class PlayerMove : MonoBehaviour
                 case PlayerState.CityAttack:
                 {
                     animator.CrossFade("TempAttack", 0);
+                    break;
+                }
+                case PlayerState.DreamIdle:
+                {
+                    animator.CrossFade("DreamIdle",0);
                     break;
                 }
             }
@@ -77,10 +82,9 @@ public class PlayerMove : MonoBehaviour
 
         if(Input.GetKey(KeyCode.Space))
         {
-            if(!jumpStarted && isGround && !isDash) //점프시작
+            if(canJump && isGround && !isDash) //점프시작
             {
                 rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, maxjumpSpeed);
-                jumpStarted = true;
                 rigidbody2D.AddForce(new Vector2(0,500), ForceMode2D.Impulse);
                 if(rigidbody2D.velocity.y > maxjumpSpeed)
                 {
@@ -88,7 +92,7 @@ public class PlayerMove : MonoBehaviour
                 }
             }
 
-            if(jumpStarted && jumpTimer < jumpLimitTime && !isDash) //점프를 누르는 중
+            if(canJump && jumpTimer < jumpLimitTime && !isDash) //점프를 누르는 중
             {
                 isJumping=true;
                 jumpTimer+=Time.deltaTime;
@@ -97,6 +101,14 @@ public class PlayerMove : MonoBehaviour
                 {
                     rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x ,maxjumpSpeed);
                 }
+            }
+        }
+
+        if(!Input.GetKey(KeyCode.Space))
+        {
+            if(isJumping && !isGround)
+            {
+                canJump=false;
             }
         }
 
@@ -123,7 +135,6 @@ public class PlayerMove : MonoBehaviour
             if(canAttack)
             {
                 playerState = PlayerState.CityAttack;
-                StartCoroutine(CityAttack());
             }
         }
         
@@ -140,7 +151,7 @@ public class PlayerMove : MonoBehaviour
             jumpTimer=0;
             canDash=true;
             isJumping=false;
-            jumpStarted=false;
+            canJump=true;
         }
         else
         {
@@ -192,16 +203,6 @@ public class PlayerMove : MonoBehaviour
         DashTimer=0;
         rigidbody2D.gravityScale = 0;
         isDash = true;
-        if(WorldManager.instance.isCity)
-        {
-            animator.SetBool("isDream", true);
-        }
-        else
-        {
-            animator.SetBool("isDream", false);
-
-        }
-
         rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, 0);
         if(isLookingleft == true)
         {
@@ -238,10 +239,6 @@ public class PlayerMove : MonoBehaviour
         rigidbody2D.gravityScale = gravityMemory;
     }
     
-    IEnumerator CityAttack()
-    {
-        yield return new WaitForSeconds(3f);
-        playerState = PlayerState.CityIdle;
-    }
+    
 
 }

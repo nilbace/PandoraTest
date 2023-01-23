@@ -25,6 +25,7 @@ public class WorldManager : MonoBehaviour
             isCity=false;
             cityTile.SetActive(false);
             dreamTile.SetActive(true);
+            AniController.instance.playerState = AniController.PlayerState.CityIdle;
         }
         else
         {
@@ -32,6 +33,7 @@ public class WorldManager : MonoBehaviour
             isCity=true;
             dreamTile.SetActive(false);
             cityTile.SetActive(true);
+            AniController.instance.playerState = AniController.PlayerState.DreamIdle;
         }
     }
 

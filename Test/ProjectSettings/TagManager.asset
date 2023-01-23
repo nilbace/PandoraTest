@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Ground
   - Wall
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -19,7 +20,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - UIZ
   - 
   - 
   - 
@@ -42,4 +43,16 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 3630913221
+    locked: 0
+  - name: Tilemaps
+    uniqueID: 2078903357
+    locked: 0
+  - name: Characters
+    uniqueID: 386682791
+    locked: 0
+  - name: UI
+    uniqueID: 1655518751
     locked: 0

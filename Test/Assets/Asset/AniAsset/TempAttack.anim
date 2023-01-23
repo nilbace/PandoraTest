@@ -33,7 +33,7 @@ AnimationClip:
       value: {fileID: -8055145359423283476, guid: a9c1e44cd3fcf91459686ccda7e22d14, type: 3}
     - time: 0.5
       value: {fileID: -6105198190144135968, guid: a9c1e44cd3fcf91459686ccda7e22d14, type: 3}
-    - time: 0.75
+    - time: 0.5833333
       value: {fileID: 6596541896346171620, guid: a9c1e44cd3fcf91459686ccda7e22d14, type: 3}
     attribute: m_Sprite
     path: 
@@ -67,7 +67,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.8333333
+    m_StopTime: 0.6666666
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -86,4 +86,18 @@ AnimationClip:
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-  m_Events: []
+  m_Events:
+  - time: 0.33333334
+    functionName: CityAttack
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.5833333
+    functionName: EndAttack
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0

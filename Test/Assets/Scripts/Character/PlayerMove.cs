@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
+    public static PlayerMove instance;
     public Rigidbody2D rigidbody2D;
-    public Animator animator;
     [Header("Move")]
     public float maxSpeed;
     public bool isLookingleft = false;
+    float originGravity = 19.6f;
 
     [Header("Jump")]
     public float jumpTimer;
@@ -29,43 +30,57 @@ public class PlayerMove : MonoBehaviour
     [Header("NormalDash")]
     public float NormalDashSpeed;
     public float NormalDashDuration;
+    public float NorMalDashCoolTime = 0.5f;
+    public float NormalDashTimer;
+    public bool canNormalDash = true;
+    
     [Header("Attack")]
     public bool canAttack = true; //일단 임시
+    [SerializeField] float attCooltime = 0.5f;
+    public float atkTimer;
+    public bool isAttacking = false;
 
-    enum PlayerState{
-        CityIdle, CityWalk, CityAttack,
-        DreamIdle, DreamWalk, DreamAttack 
+    
+
+    
+
+    private void Awake() {
+        instance=this;
     }
-
-    [SerializeField] PlayerState playerState = PlayerState.CityIdle;
-    PlayerState lastPlayerState = PlayerState.CityIdle;
 
     void FixedUpdate()
     {
-        if(lastPlayerState != playerState)
+        DashTimer+=Time.deltaTime; NormalDashTimer += Time.deltaTime;
+        atkTimer += Time.deltaTime;
+        
+        if(atkTimer > attCooltime)
         {
-            lastPlayerState = playerState;
-            switch(playerState)
+            isAttacking = false;
+        }
+
+        
+        float h = Input.GetAxisRaw("Horizontal");
+        if(!isDash && !isAttacking && h==0)
+        {
+            AniController.instance.playerState = AniController.PlayerState.CityIdle;
+        }
+
+        if(!isDash && !isAttacking && h!=0)
+        {
+            AniController.instance.playerState = AniController.PlayerState.CityWalk;
+        }
+
+        if(isJumping && !isDash)
+        {
+            if(h==0)
             {
-                case PlayerState.CityIdle:
-                {
-                    animator.CrossFade("StartUmbr",0);
-                    break;
-                }
-                case PlayerState.CityAttack:
-                {
-                    animator.CrossFade("TempAttack", 0);
-                    break;
-                }
-                case PlayerState.DreamIdle:
-                {
-                    animator.CrossFade("DreamIdle",0);
-                    break;
-                }
+                AniController.instance.playerState = AniController.PlayerState.CityFrontJump;
+            }
+            else{
+                AniController.instance.playerState = AniController.PlayerState.CitySideJump;
             }
         }
-        DashTimer+=Time.deltaTime;
-        float h = Input.GetAxisRaw("Horizontal");  
+
         if(!isDash) 
         {
             lookingLeftOrRight(h);
@@ -112,7 +127,7 @@ public class PlayerMove : MonoBehaviour
             }
         }
 
-        if(Input.GetKey(KeyCode.LeftShift))  //이면대쉬
+        if(Input.GetKey(KeyCode.LeftControl))  //이면대쉬
         {
             if(canDash && DashTimer>DashCoolTime) 
             {
@@ -121,20 +136,24 @@ public class PlayerMove : MonoBehaviour
             }
         }
 
-        if(Input.GetKey(KeyCode.LeftControl))   //일반대쉬
+        if(Input.GetKey(KeyCode.LeftShift))   //일반대쉬
         {
-            if(canDash && DashTimer>DashCoolTime) 
+            if(canNormalDash && NormalDashTimer>NorMalDashCoolTime) 
             {
                 StartCoroutine(NormalDash());
-                if(isJumping && canDash) {  canDash = false; jumpTimer+=5;}
+                if(isJumping && canNormalDash) {  canNormalDash = false; jumpTimer+=5;}
             }
         }
 
         if(Input.GetKey(KeyCode.J))   //기본공격
         {
-            if(canAttack)
-            {
-                playerState = PlayerState.CityAttack;
+            if(canAttack && atkTimer > attCooltime)
+            {   
+                atkTimer = 0;
+                isAttacking = true;
+                AttackController.instance.CityAttack();
+                AniController.instance.playerState=AniController.PlayerState.CityAttack;
+                print("StartAtk");
             }
         }
         
@@ -152,6 +171,7 @@ public class PlayerMove : MonoBehaviour
             canDash=true;
             isJumping=false;
             canJump=true;
+            canNormalDash=true;
         }
         else
         {
@@ -198,7 +218,6 @@ public class PlayerMove : MonoBehaviour
 
     IEnumerator Dash()
     {
-        float gravityMemory = rigidbody2D.gravityScale;
         WorldManager.instance.Change();
         DashTimer=0;
         rigidbody2D.gravityScale = 0;
@@ -215,15 +234,14 @@ public class PlayerMove : MonoBehaviour
         yield return new WaitForSeconds(DashDuration);
         rigidbody2D.velocity = Vector2.zero;
         isDash=false;
-        rigidbody2D.gravityScale = gravityMemory;
+        rigidbody2D.gravityScale = originGravity;
     }
    
     IEnumerator NormalDash()
     {
-        float gravityMemory = rigidbody2D.gravityScale;
-        DashTimer=0;
+        NormalDashTimer=0;
         rigidbody2D.gravityScale = 0;
-        isDash = true;
+        isDash = true; //공용
         rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, 0);
         if(isLookingleft == true)
         {
@@ -235,10 +253,7 @@ public class PlayerMove : MonoBehaviour
         }
         yield return new WaitForSeconds(NormalDashDuration);
         rigidbody2D.velocity = Vector2.zero;
-        isDash=false;
-        rigidbody2D.gravityScale = gravityMemory;
+        isDash=false;//공용
+        rigidbody2D.gravityScale = originGravity;
     }
-    
-    
-
 }

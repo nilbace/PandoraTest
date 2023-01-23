@@ -1,0 +1,88 @@
+{
+  "infos": [
+    {
+      "Name": "Pandora",
+      "isleft": true,
+      "diaData": "간부님,",
+      "speed": 0.04,
+      "FontSize": 20.0
+    },
+    {
+      "Name": "Priest",
+      "isleft": false,
+      "diaData": "'계승식'은 끝내셨습니까?",
+      "speed": 0.04,
+      "FontSize": 20.0
+    },
+    {
+      "Name": "Pandora",
+      "isleft": true,
+      "diaData": "들어가겠습니다",
+      "speed": 0.04,
+      "FontSize": 20.0
+    },
+    {
+      "Name": "Pandora",
+      "isleft": true,
+      "diaData": "아무도 안 계십니까?",
+      "speed": 0.04,
+      "FontSize": 20.0
+    },
+    {
+      "Name": "Pandora",
+      "isleft": true,
+      "diaData": "'왜 대답이 없으시지'",
+      "speed": 0.04,
+      "FontSize": 20.0
+    },
+    {
+      "Name": "Pandora",
+      "isleft": true,
+      "diaData": "'원래 여기가 이렇게 붉었나?'",
+      "speed": 0.04,
+      "FontSize": 20.0
+    },
+    {
+      "Name": "Pandora",
+      "isleft": true,
+      "diaData": "....!!",
+      "speed": 0.04,
+      "FontSize": 20.0
+    },
+    {
+      "Name": "Pandora",
+      "isleft": true,
+      "diaData": "괜찮으십니까 사제님?",
+      "speed": 0.04,
+      "FontSize": 20.0
+    },
+    {
+      "Name": "Pandora",
+      "isleft": true,
+      "diaData": "이게 무슨 일이야...",
+      "speed": 0.04,
+      "FontSize": 20.0
+    },
+    {
+      "Name": "Pandora",
+      "isleft": true,
+      "diaData": "다른 사람들은?",
+      "speed": 0.04,
+      "FontSize": 20.0
+    },
+    {
+      "Name": "Pandora",
+      "isleft": true,
+      "diaData": "네가 어째서..?",
+      "speed": 0.04,
+      "FontSize": 20.0
+    },
+    {
+      "Name": "Pandora",
+      "isleft": true,
+      "diaData": "... 왜?",
+      "speed": 0.04,
+      "FontSize": 20.0
+    }
+  ]
+}

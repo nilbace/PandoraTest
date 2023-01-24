@@ -29,6 +29,7 @@ public class EventManager : MonoBehaviour
         camera.transform.position += new Vector3(0, camerayPOs, 0);
         BlackImage.SetActive(true);
         SpeechManager.instance.text.text = "";
+        Screen.SetResolution(640, 360, true);
     }
 
     void Update()

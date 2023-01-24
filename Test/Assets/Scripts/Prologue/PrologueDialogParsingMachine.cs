@@ -15,6 +15,7 @@ public class PrologueDialogParsingMachine : MonoBehaviour
         //SaveJson();
         LoadJson();
         instance = this;
+        
     }
 
     

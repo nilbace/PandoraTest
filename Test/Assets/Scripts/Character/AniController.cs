@@ -7,7 +7,7 @@ public class AniController : MonoBehaviour
     public Animator animator;
     public static AniController instance;
     public enum PlayerState{
-        CityIdle, CityWalk, CityAttack, CityFrontJump, CitySideJump,
+        CityIdle, CityWalk, CityAttack, CityUPJumping, CityDownJumping, CityLanding, CityClingLeft, CityClingLeftJump, CityClingRight, CityJumpDash,
         DreamIdle, DreamWalk, DreamAttack 
     }
     public PlayerState playerState = PlayerState.CityIdle;
@@ -38,16 +38,38 @@ public class AniController : MonoBehaviour
                     animator.CrossFade("CityWalk",0, -1, 0);
                     break;
                 }
-                case PlayerState.CityFrontJump:
+                case PlayerState.CityUPJumping:
                 {
-                    animator.CrossFade("CityFrontJump",0);
+                    animator.CrossFade("CityUPJumping",0);
                     break;
                 }
-                case PlayerState.CitySideJump:
+                case PlayerState.CityDownJumping:
                 {
-                    animator.CrossFade("CitySideJump",0);
+                    animator.CrossFade("CityDownJumping",0);
                     break;
                 }
+                case PlayerState.CityLanding:
+                {
+                    animator.CrossFade("CityLanding",0);
+                    break;
+                }
+                case PlayerState.CityClingLeft:
+                {
+                    animator.CrossFade("CityClingLeft",0);
+                    break;
+                }
+                case PlayerState.CityClingLeftJump:
+                {
+                    animator.CrossFade("CityClingLeftJump",0);
+                    break;
+                }
+                case PlayerState.CityJumpDash:
+                {
+                    animator.CrossFade("CityJumpDash",0);
+                    break;
+                }
+
+
                 case PlayerState.DreamIdle:
                 {
                     animator.CrossFade("DreamIdle",0);

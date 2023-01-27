@@ -15,8 +15,8 @@ TagManager:
   - Water
   - UI
   - Ground
-  - 
-  - 
+  - LeftWall
+  - RightWall
   - 
   - 
   - 
@@ -44,11 +44,20 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Background
+  - name: BBBackGround
+    uniqueID: 2648984949
+    locked: 0
+  - name: BBackGround
     uniqueID: 3630913221
+    locked: 0
+  - name: BackGround
+    uniqueID: 1374836147
     locked: 0
   - name: Tilemaps
     uniqueID: 2078903357
+    locked: 0
+  - name: TrailEffect
+    uniqueID: 3023262863
     locked: 0
   - name: Characters
     uniqueID: 386682791

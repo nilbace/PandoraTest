@@ -9,7 +9,6 @@ public class PriMove : MonoBehaviour
     bool isLookingleft = false;
     public bool CanWalk = false;
     public static PriMove instance;
-    public GameObject HandLight;
     public Animator animator;
     void Start() 
     {

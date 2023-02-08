@@ -24,42 +24,21 @@
     {
       "Name": "Pandora",
       "isleft": true,
-      "diaData": "아무도 안 계십니까?",
+      "diaData": "아...아무도 안 계십니까?",
       "speed": 0.04,
       "FontSize": 20.0
     },
     {
       "Name": "Pandora",
       "isleft": true,
-      "diaData": "'왜 대답이 없으시지'",
+      "diaData": "...!!",
       "speed": 0.04,
       "FontSize": 20.0
     },
     {
       "Name": "Pandora",
       "isleft": true,
-      "diaData": "'원래 여기가 이렇게 붉었나?'",
-      "speed": 0.04,
-      "FontSize": 20.0
-    },
-    {
-      "Name": "Pandora",
-      "isleft": true,
-      "diaData": "....!!",
-      "speed": 0.04,
-      "FontSize": 20.0
-    },
-    {
-      "Name": "Pandora",
-      "isleft": true,
-      "diaData": "괜찮으십니까 사제님?",
-      "speed": 0.04,
-      "FontSize": 20.0
-    },
-    {
-      "Name": "Pandora",
-      "isleft": true,
-      "diaData": "이게 무슨 일이야...",
+      "diaData": "무슨 일이...!!",
       "speed": 0.04,
       "FontSize": 20.0
     },
@@ -73,14 +52,14 @@
     {
       "Name": "Pandora",
       "isleft": true,
-      "diaData": "네가 어째서..?",
+      "diaData": "어째서 네가...?",
       "speed": 0.04,
       "FontSize": 20.0
     },
     {
       "Name": "Pandora",
       "isleft": true,
-      "diaData": "... 왜?",
+      "diaData": "왜...?",
       "speed": 0.04,
       "FontSize": 20.0
     }

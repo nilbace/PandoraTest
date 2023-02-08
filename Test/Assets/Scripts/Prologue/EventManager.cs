@@ -2,22 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Experimental.Rendering.Universal;
+using UnityEngine.Playables;
 
 public class EventManager : MonoBehaviour
 {
     public GameObject priest;
-    public int eventChecker = 1;
-    public GameObject camera;
-    public float camerayPOs;
-
-    //1번은 암전화면 첫 대사
-    //2번은 암전화면 밝아짐 & 조작가능
-    //3번은 이벤트존 도달시 다들 어디간거야 대사
-
-    public GameObject EventZone1;
-    public GameObject EventZone2;
-    public GameObject BlackImage;
-    public Image blackImage;
+    public List<Light2D> WorldLights;
+    public PlayableDirector Event1;
+    public PlayableDirector CamOutEvent;
+    List<float> firstInten;
+    public float FadeinTime;
+    int eventChecker = 1;
+    public GameObject EventZone1;  //1번은 암전화면 첫 대사
+    public GameObject EventZone2;  //2번은 암전화면 밝아짐 & 조작가능
+    public GameObject PandoraEvent;
     public float timer;
     public float bendBodyTime =2f;  //사제 발견후 몸 숙임
     public float wakeuptime = 2f;   //일어남
@@ -26,16 +25,24 @@ public class EventManager : MonoBehaviour
     public float EnPanDiaDelay = 2f;
     
     private void Start() {
-        camera.transform.position += new Vector3(0, camerayPOs, 0);
-        BlackImage.SetActive(true);
-        SpeechManager.instance.text.text = "";
         Screen.SetResolution(640, 360, true);
+
+        firstInten = new List<float>();
+
+        foreach(Light2D light in WorldLights)
+        {
+            firstInten.Add(light.intensity);
+            light.intensity = 0;
+        }
     }
 
     void Update()
     {
         timer+=Time.deltaTime;
-        camera.transform.position = new Vector3(priest.transform.position.x + 1, camera.transform.position.y, camera.transform.position.z);
+        if(eventChecker == 0 && Input.GetKeyDown(KeyCode.Space))
+        {
+            //timer=0; eventChecker++;
+        }
         if(eventChecker==1 && Input.GetKeyDown(KeyCode.Space))
         {
             timer=0;
@@ -64,7 +71,7 @@ public class EventManager : MonoBehaviour
         {
             timer=0;
             eventChecker++;
-            StartCoroutine(fadein());
+            StartCoroutine(Fadein());
         }
 
         if(eventChecker==5 && Input.GetKeyDown(KeyCode.Space) && timer > 0.5f)
@@ -72,42 +79,57 @@ public class EventManager : MonoBehaviour
             timer=0;
             eventChecker++;
             SpeechManager.instance.PrintSpeech(PrologueDialogParsingMachine.instance.infos[3]);
-            //아무도 안 계십니까
-        }
-
-        if(eventChecker==6 && Input.GetKeyDown(KeyCode.Space) && timer > 0.5f)
-        {
-            timer=0;
-            eventChecker++;
-            SpeechManager.instance.PrintSpeech(PrologueDialogParsingMachine.instance.infos[4]);
-            //왜 대답이 없으시지
-        }
-
-        if(eventChecker==7 && Input.GetKeyDown(KeyCode.Space) && timer > 0.5f)
-        {
-            timer=0;
-            eventChecker++;
-            SpeechManager.instance.PrintSpeech(PrologueDialogParsingMachine.instance.infos[5]);
             PriMove.instance.CanWalk = true;
-            //원래 여기가 이렇게 붉었나
+            //아무도 안 계십니까
+            //하급사제 움직임 가능
         }
 
-        if(eventChecker==8 && priest.transform.position.x > EventZone1.transform.position.x)
+        if(eventChecker==6 && priest.transform.position.x > EventZone1.transform.position.x)
+        //첫번째 이벤트존 뱀 앞에 도달
         {
             timer=0;
             eventChecker++;
-            SpeechManager.instance.PrintSpeech(PrologueDialogParsingMachine.instance.infos[6]);
-            //...!!
             PriMove.instance.CanWalk = false;
-            StartCoroutine(CheckPriest());
+            Event1.Play();
+            //뱀 불 켜짐
         }
 
-        if(eventChecker==9 && priest.transform.position.x > EventZone2.transform.position.x)
+        if(eventChecker==7 && timer > 2f)
+        //카메라 축소 이벤트
         {
+            timer=0;
             eventChecker++;
-            PriMove.instance.CanWalk=false;
-            StartCoroutine(EncounterPandora());
+            CamOutEvent.Play();
         }
+
+        if(eventChecker==8 && timer>1f)
+        {
+            timer=0;
+            eventChecker++;
+            PriMove.instance.CanWalk = true;
+        }
+
+        //이제 의사까지 가는 중간에 시체 발견
+
+        //의사 벽화에서 상호작용
+
+        //시체와 피가 많아짐
+
+        //감옥 벽화 근처로 가면 쿵쿵거리는거
+
+        //빈벽화
+
+        //제단 앞에서 제어 불가
+
+        if(eventChecker==9 && priest.transform.position.x > PandoraEvent.transform.position.x)
+        {
+            timer=0;
+            eventChecker++;
+
+            StartCoroutine(EncounterPandora());
+            PriMove.instance.CanWalk = true;
+        }
+
 
 
         /* 
@@ -119,14 +141,16 @@ public class EventManager : MonoBehaviour
         */
     }
 
-    IEnumerator fadein()
+    IEnumerator Fadein()
     {
         for(int i = 0; i < 10; i++)
         {
-            yield return new WaitForSeconds(0.2f);
-            Color color = blackImage.color;
-            color.a -= 0.1f;
-            blackImage.color = color;
+            yield return new WaitForSeconds(FadeinTime/10f);
+
+            for(int j = 0; j < WorldLights.Count; j++)
+            {
+                WorldLights[j].intensity = firstInten[j]*(float)i/9f;
+            }
         }
     }
 
@@ -151,11 +175,11 @@ public class EventManager : MonoBehaviour
 
     IEnumerator EncounterPandora()
     {
-        SpeechManager.instance.PrintSpeech(PrologueDialogParsingMachine.instance.infos[10]);
+        SpeechManager.instance.PrintSpeech(PrologueDialogParsingMachine.instance.infos[7]);
         yield return new WaitForSeconds(EnPanDiaDelay);
         //네가 어쨰서
 
-        SpeechManager.instance.PrintSpeech(PrologueDialogParsingMachine.instance.infos[11]);
+        SpeechManager.instance.PrintSpeech(PrologueDialogParsingMachine.instance.infos[8]);
         //왜
 
         //판도라 애니메이션

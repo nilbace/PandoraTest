@@ -18,7 +18,7 @@ public class SpeechManager : MonoBehaviour
         instance=this;
     }
 
-    private void Update() {
+    private void LateUpdate() {
         speechBubble.transform.position = priest.transform.position + plusPoz;
     }
 
@@ -38,7 +38,7 @@ public class SpeechManager : MonoBehaviour
             yield return new WaitForSeconds(PrintingDelay);
             nowString = dialogue.diaData.Substring(0, nowLength+1);
             text.text = nowString;
-            speechBubbleSize.sizeDelta = new Vector2(100f+(nowLength)*28f, speechBubbleSize.sizeDelta.y);
+            speechBubbleSize.sizeDelta = new Vector2(0.7f+(nowLength)*0.18f, speechBubbleSize.sizeDelta.y);
             speechBubble.SetActive(true);
         }
         if(nowLength == dialogue.diaData.Length)

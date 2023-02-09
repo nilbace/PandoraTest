@@ -7,7 +7,8 @@ public class AniController : MonoBehaviour
     public Animator animator;
     public static AniController instance;
     public enum PlayerState{
-        CityIdle, CityWalk, CityAttack, CityUPJumping, CityDownJumping, CityLanding, CityClingLeft, CityClingLeftJump, CityClingRight, CityJumpDash,
+        CityIdle, CityWalk, CityAttack, CityAttack2, CityUPJumping, CityDownJumping, CityLanding, CityClingLeft, CityClingLeftJump, CityClingRight, CityJumpDash, 
+
         DreamIdle, DreamWalk, DreamAttack 
     }
     public PlayerState playerState = PlayerState.CityIdle;

@@ -25,7 +25,7 @@ public class EventManager : MonoBehaviour
 
 
     public List<Light2D> WorldLights;
-    public PlayableDirector Event1;
+    public PlayableDirector CamMove;
     public PlayableDirector CamOutEvent;
     AudioSource myaudio;
     public AudioSource BGM;
@@ -47,6 +47,7 @@ public class EventManager : MonoBehaviour
     public float EventZone3;  //3번은 손2
     public float EventZone4;  //4번은 죄수 
     public float PandoraEvent;
+    bool isEnding = false;
     public float timer;
     public float bendBodyTime =2f;  //사제 발견후 몸 숙임
     public float wakeuptime = 2f;   //일어남
@@ -78,9 +79,12 @@ public class EventManager : MonoBehaviour
         }
     }
 
+    private void LateUpdate() {
+        if(!isEnding) Cam.transform.position = new Vector3(priest.transform.position.x+0.5f, Cam.transform.position.y, Cam.transform.position.z);
+
+    }
     void Update()
     {
-        Cam.transform.position = new Vector3(priest.transform.position.x+0.5f, Cam.transform.position.y, Cam.transform.position.z);
         timer+=Time.deltaTime;
 
         if(eventChecker == 0)
@@ -202,8 +206,8 @@ public class EventManager : MonoBehaviour
             timer=0;
             eventChecker++;
             PriMove.instance.CanWalk = false;
-            print("eventStart");
-            SpeechManager.instance.PrintSpeech(PrologueDialogParsingMachine.instance.infos[4]);
+            StartCoroutine(movePoint5());
+            
             // ...!
         }
 
@@ -220,6 +224,7 @@ public class EventManager : MonoBehaviour
             timer=0;
             eventChecker++;
             SpeechManager.instance.PrintSpeech(PrologueDialogParsingMachine.instance.infos[6]);
+            priest.GetComponent<PriMove>().isShaking = false;
             // 다른 사람들은?
         }
 
@@ -242,7 +247,7 @@ public class EventManager : MonoBehaviour
         } 
 
         if(eventChecker==12 && priest.transform.position.x > EventZone3)
-        //손1
+        //손2
         {
             timer=0;
             eventChecker++;
@@ -251,13 +256,21 @@ public class EventManager : MonoBehaviour
         }
 
         if(eventChecker==13 && priest.transform.position.x > EventZone4)
-        //손1
+        //죄수 완료
         {
             timer=0;
             eventChecker++;
             fire.SetActive(true);
             prisoner.SetActive(true);
             myaudio.clip = hand; myaudio.Play();
+        }
+
+        if(eventChecker==14 && priest.transform.position.x > PandoraEvent)
+        {
+            eventChecker++;
+            PriMove.instance.CanWalk=false;
+            isEnding=true;
+            CamMove.Play();
         }
     }
 
@@ -312,6 +325,21 @@ public class EventManager : MonoBehaviour
             Camera temp = Cam.GetComponent<Camera>();
             temp.orthographicSize = Mathf.Lerp(1.67f, 0.92f, Mathf.Pow((timer/Zoomtime),zoomScale));
         }
+    }
+    public float deadlookDelay;
+    public float shakedelay;
+    IEnumerator movePoint5()
+    {
+        for(int i = 1;i<=30;i++)
+        {
+            yield return new WaitForSeconds(0.008f);
+            float k = (float)i/30f;
+            priest.transform.position = new Vector3(Mathf.Lerp(EventZone1, 16.6f, k),priest.transform.position.y,0);
+        }
+        yield return new WaitForSeconds(deadlookDelay);
+        SpeechManager.instance.PrintSpeech(PrologueDialogParsingMachine.instance.infos[4]);
+        yield return new WaitForSeconds(shakedelay);
+        priest.GetComponent<PriMove>().isShaking = true;
     }
 
     IEnumerator CheckPriest()

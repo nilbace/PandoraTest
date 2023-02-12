@@ -8,6 +8,7 @@ public class PriMove : MonoBehaviour
     [SerializeField] public float maxSpeed = 3f;
     bool isLookingleft = false;
     public bool CanWalk = false;
+    public bool isShaking= false;
     public static PriMove instance;
     public Animator animator;
     void Start() 
@@ -17,8 +18,13 @@ public class PriMove : MonoBehaviour
 
     void Update()
     {
+        float k = rigidbody2D.velocity.x;
             float h = Input.GetAxisRaw("Horizontal");  
-            if(h==0)
+            if(isShaking)
+            {
+                animator.CrossFade("Shaking",0);
+            }
+            if(k==0 && !isShaking)
             {
                 animator.CrossFade("PriIdle",0);
             }

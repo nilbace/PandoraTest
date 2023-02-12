@@ -9,9 +9,15 @@ public class EventManager : MonoBehaviour
 {
     [Header("Dev")]
     public bool DevMode;
+    public float devModeSpeed;
     public int eventChecker = 0;
+    [Header("Object")]
 
     public GameObject priest;
+    public GameObject Hand1;
+    public GameObject hand2;
+    public GameObject prisoner;
+    public GameObject fire;
 
     [Header("Cam")]
     public GameObject Cam;
@@ -34,10 +40,13 @@ public class EventManager : MonoBehaviour
 
     List<float> firstInten;
     public float FadeinTime;
-    public GameObject EventZone1;  //1번은 뱀위치
-    public GameObject EventZone2;  //2번은 의사위치
-    public GameObject EventZone3;  //시체 위치
-    public GameObject PandoraEvent;
+
+    [Header("Event")]
+    public float EventZone1;  //1번은 죽은사제
+    public float EventZone2;  //2번은 손1
+    public float EventZone3;  //3번은 손2
+    public float EventZone4;  //4번은 죄수 
+    public float PandoraEvent;
     public float timer;
     public float bendBodyTime =2f;  //사제 발견후 몸 숙임
     public float wakeuptime = 2f;   //일어남
@@ -49,6 +58,7 @@ public class EventManager : MonoBehaviour
         Screen.SetResolution(640, 360, true);
         myaudio = GetComponent<AudioSource>();
         firstInten = new List<float>();
+        jailSetting();
 
         //어둠게 시작
         foreach(Light2D light in WorldLights)
@@ -60,7 +70,7 @@ public class EventManager : MonoBehaviour
         {
             StartCoroutine(Fadein());
             PriMove.instance.CanWalk = true;
-            PriMove.instance.maxSpeed = 2f;
+            PriMove.instance.maxSpeed = devModeSpeed;
         }
         else
         {
@@ -132,6 +142,8 @@ public class EventManager : MonoBehaviour
             //하급사제 움직임 가능
         }
 
+        #region  빛의 봉인검
+        /* 당분간 봉인
         if(eventChecker==7 && priest.transform.position.x > EventZone1.transform.position.x)
         //첫번째 이벤트존 뱀 앞에 도달
         //단순줌아웃
@@ -147,7 +159,7 @@ public class EventManager : MonoBehaviour
         {
             timer=0;
             eventChecker++;
-            StartCoroutine(ZoomOut());
+            //StartCoroutine(ZoomOut());
         }
 
         if(eventChecker==9 && timer > 4f && Input.anyKey)
@@ -155,7 +167,7 @@ public class EventManager : MonoBehaviour
             timer=0;
             eventChecker++;
             PriMove.instance.CanWalk = true;
-            StartCoroutine(Zoomin());
+            //StartCoroutine(Zoomin());
         }
 
         //의사벽화 만남
@@ -171,18 +183,21 @@ public class EventManager : MonoBehaviour
         {
             timer=0;
             eventChecker++;
-            StartCoroutine(ZoomOut());
+            //StartCoroutine(ZoomOut());
         }
 
         if(eventChecker==12 && timer>4f && Input.anyKey)
         {
             timer=0; eventChecker++;
             PriMove.instance.CanWalk=true;
-            StartCoroutine(Zoomin());
+            //StartCoroutine(Zoomin());
         }
+        여기까지 봉인
+        */
+        #endregion
 
         //시체 조우
-        if(eventChecker==13 && priest.transform.position.x > EventZone3.transform.position.x)
+        if(eventChecker==7 && priest.transform.position.x > EventZone1)
         {
             timer=0;
             eventChecker++;
@@ -192,7 +207,7 @@ public class EventManager : MonoBehaviour
             // ...!
         }
 
-        if(eventChecker==14 && Input.GetKeyDown(KeyCode.Z) && timer > 0.5f)
+        if(eventChecker==8 && Input.GetKeyDown(KeyCode.Z) && timer > 0.5f)
         {
             timer=0;
             eventChecker++;
@@ -200,7 +215,7 @@ public class EventManager : MonoBehaviour
             //무슨 일이
         }
 
-        if(eventChecker==15 && Input.GetKeyDown(KeyCode.Z) && timer > 0.5f)
+        if(eventChecker==9 && Input.GetKeyDown(KeyCode.Z) && timer > 0.5f)
         {
             timer=0;
             eventChecker++;
@@ -208,20 +223,55 @@ public class EventManager : MonoBehaviour
             // 다른 사람들은?
         }
 
-        if(eventChecker==16 && Input.GetKeyDown(KeyCode.Z) && timer>0.5f)
+        if(eventChecker==10 && Input.GetKeyDown(KeyCode.Z) && timer>0.5f)
         //걷기 가능
         {
             timer=0;
             eventChecker++;
             PriMove.instance.CanWalk = true;
         }  
+        
+        //Prison
+        if(eventChecker==11 && priest.transform.position.x > EventZone2)
+        //손1
+        {
+            timer=0;
+            eventChecker++;
+            Hand1.SetActive(true);
+            myaudio.clip = hand; myaudio.Play();
+        } 
+
+        if(eventChecker==12 && priest.transform.position.x > EventZone3)
+        //손1
+        {
+            timer=0;
+            eventChecker++;
+            hand2.SetActive(true);
+            myaudio.clip = hand; myaudio.Play();
+        }
+
+        if(eventChecker==13 && priest.transform.position.x > EventZone4)
+        //손1
+        {
+            timer=0;
+            eventChecker++;
+            fire.SetActive(true);
+            prisoner.SetActive(true);
+            myaudio.clip = hand; myaudio.Play();
+        }
     }
 
     void ZtoScreen()
     {
         print("Z키가 화면에 나온다");
     }
-
+    void jailSetting()
+    {
+        Hand1.SetActive(false);
+        hand2.SetActive(false);
+        fire.SetActive(false);
+        prisoner.SetActive(false);
+    }
 
     IEnumerator Fadein()
     {
